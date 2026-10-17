@@ -3,6 +3,7 @@ package note
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 )
 
@@ -18,13 +19,24 @@ func Initialize() error {
 	file, err := os.OpenFile(notesFileName, os.O_CREATE|os.O_RDWR, 0o644)
 	fmt.Println("File initialized", file)
 
-	notes, err := Notes()
-
-	if err != nil || len(notes) == 0 {
-		err := os.WriteFile(notesFileName, []byte("[empty file]"), 0o644)
+	if err != nil {
 		return err
 	}
 
+	defer file.Close()
+
+	var notes []note
+
+	err = json.NewDecoder(file).Decode(&notes)
+
+	if (err != nil && err != io.EOF) || len(notes) == 0 {
+		file.Truncate(0)
+		_, err = file.Write([]byte("[]"))
+		fmt.Println("File initialized")
+		return err
+	}
+
+	fmt.Println("File already exists")
 	return nil
 }
 
@@ -37,7 +49,7 @@ func New(title string, inProgress bool) (note, error) {
 	}, nil
 }
 
-func Save(n note) error {
+func (n note) Save() error {
 	json, err := json.Marshal(n)
 	if err != nil {
 		fmt.Println("Error")
@@ -48,17 +60,15 @@ func Save(n note) error {
 }
 
 func Notes() ([]note, error) {
-	rawData, err := os.ReadFile(notesFileName)
+	file, err := os.OpenFile(notesFileName, os.O_RDONLY, 0o644)
 	if err != nil {
-		fmt.Println("could not read from file: ", notesFileName)
 		return nil, err
 	}
 
 	var notes []note
 
-	err = json.Unmarshal(rawData, &notes)
+	err = json.NewDecoder(file).Decode(&notes)
 	if err != nil {
-		fmt.Println("Error Unmarshalling JSON:", err)
 		return nil, err
 	}
 
