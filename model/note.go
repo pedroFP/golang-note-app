@@ -31,6 +31,7 @@ func Initialize() error {
 
 	if (err != nil && err != io.EOF) || len(notes) == 0 {
 		file.Truncate(0)
+		file.Seek(0, 0)
 		_, err = file.Write([]byte("[]"))
 		fmt.Println("File initialized")
 		return err
@@ -49,10 +50,10 @@ func New(title string, inProgress bool) (note, error) {
 	}, nil
 }
 
-func (n note) Save() error {
+func (n *note) Save() error {
 	json, err := json.Marshal(n)
 	if err != nil {
-		fmt.Println("Error")
+		fmt.Println("Error on save")
 		return err
 	}
 
