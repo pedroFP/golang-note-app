@@ -17,7 +17,7 @@ type note struct {
 
 func Initialize() error {
 	file, err := os.OpenFile(notesFileName, os.O_CREATE|os.O_RDWR, 0o644)
-	fmt.Println("File initialized", file)
+	fmt.Println("File initialized open or created")
 
 	if err != nil {
 		return err
@@ -33,7 +33,7 @@ func Initialize() error {
 		file.Truncate(0)
 		file.Seek(0, 0)
 		_, err = file.Write([]byte("[]"))
-		fmt.Println("File initialized")
+		fmt.Println("File was set to '[]'")
 		return err
 	}
 
@@ -44,20 +44,28 @@ func Initialize() error {
 func New(title string, inProgress bool) (note, error) {
 	id := generateID()
 	return note{
-		id:         id,
-		title:      title,
-		inProgress: inProgress,
+		ID:         id,
+		Title:      title,
+		InProgress: inProgress,
 	}, nil
 }
 
 func (n *note) Save() error {
-	json, err := json.Marshal(n)
+	notes, err := Notes()
 	if err != nil {
 		fmt.Println("Error on save")
 		return err
 	}
 
-	return os.WriteFile(notesFileName, json, 0o644)
+	updatedNotes := append(notes, *n)
+
+	data, err := json.Marshal(updatedNotes)
+	if err != nil {
+		fmt.Println("Error on Marshal updatedNotes")
+		return err
+	}
+
+	return os.WriteFile(notesFileName, data, 0o644)
 }
 
 func Notes() ([]note, error) {
