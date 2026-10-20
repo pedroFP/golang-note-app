@@ -7,19 +7,13 @@ import (
 )
 
 func main() {
-	note.Initialize()
-
-	// return
-
-	notes, err := note.Notes()
+	err := note.Initialize()
 	if err != nil {
-		fmt.Println("Error on Initialize: ", err)
+		fmt.Println("note not instanced")
 		return
 	}
 
-	fmt.Println(notes)
-
-	newNote, err := note.New("New NOte title", false)
+	newNote, err := note.New("New NOte title 2", false)
 	if err != nil {
 		fmt.Println("note not instanced")
 		return
@@ -31,6 +25,6 @@ func main() {
 		return
 	}
 
-	notes, _ = note.Notes()
+	notes, _ := note.Notes()
 	fmt.Println(notes)
 }
