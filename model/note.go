@@ -10,9 +10,9 @@ import (
 const notesFileName = "notes.json"
 
 type note struct {
-	id         int
-	title      string
-	inProgress bool
+	ID         int
+	Title      string
+	InProgress bool
 }
 
 func Initialize() error {
