@@ -42,9 +42,7 @@ func Initialize() error {
 }
 
 func New(title string, inProgress bool) (note, error) {
-	id := generateID()
 	return note{
-		ID:         id,
 		Title:      title,
 		InProgress: inProgress,
 	}, nil
@@ -56,6 +54,8 @@ func (n *note) Save() error {
 		fmt.Println("Error on save")
 		return err
 	}
+
+	n.ID = len(notes) + 1
 
 	updatedNotes := append(notes, *n)
 
@@ -82,10 +82,4 @@ func Notes() ([]note, error) {
 	}
 
 	return notes, nil
-}
-
-func generateID() int {
-	// TODO: Should be the count of total notes + 1 | consider a notes index in cache (a variable)
-	// TODO: Count the total notes based on the length of the list read from the JSON file
-	return 0
 }
