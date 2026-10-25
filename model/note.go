@@ -83,7 +83,7 @@ func (n *note) Update() error {
 
 	data, err := json.Marshal(notes)
 	if err != nil {
-		fmt.Println("Error on Marshal updatedNotes")
+		fmt.Println("Update(): Error on Marshal")
 		return err
 	}
 
