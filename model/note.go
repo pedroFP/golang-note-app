@@ -68,6 +68,28 @@ func (n *note) Save() error {
 	return os.WriteFile(notesFileName, data, 0o644)
 }
 
+func (n *note) Update() error {
+	notes, err := Notes()
+	if err != nil {
+		return err
+	}
+
+	for index, element := range notes {
+		if element.ID == n.ID {
+			notes[index] = *n
+			break
+		}
+	}
+
+	data, err := json.Marshal(notes)
+	if err != nil {
+		fmt.Println("Error on Marshal updatedNotes")
+		return err
+	}
+
+	return os.WriteFile(notesFileName, data, 0o644)
+}
+
 func Notes() ([]note, error) {
 	file, err := os.OpenFile(notesFileName, os.O_RDONLY, 0o644)
 	if err != nil {
