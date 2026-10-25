@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 
 	note "notesapp.com/app/model"
@@ -26,5 +27,7 @@ func main() {
 	}
 
 	notes, _ := note.Notes()
-	fmt.Println(notes)
+
+	buffer, _ := json.Marshal(notes)
+	fmt.Println(string(buffer))
 }
