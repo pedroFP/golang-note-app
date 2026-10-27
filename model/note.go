@@ -2,6 +2,7 @@ package note
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -15,6 +16,8 @@ type note struct {
 	InProgress bool
 }
 
+type notes []note
+
 func Initialize() error {
 	file, err := os.OpenFile(notesFileName, os.O_CREATE|os.O_RDWR, 0o644)
 	fmt.Println("File initialized open or created")
@@ -25,7 +28,7 @@ func Initialize() error {
 
 	defer file.Close()
 
-	var notes []note
+	var notes notes
 
 	err = json.NewDecoder(file).Decode(&notes)
 
@@ -90,13 +93,13 @@ func (n *note) Update() error {
 	return os.WriteFile(notesFileName, data, 0o644)
 }
 
-func Notes() ([]note, error) {
+func Notes() (notes, error) {
 	file, err := os.OpenFile(notesFileName, os.O_RDONLY, 0o644)
 	if err != nil {
 		return nil, err
 	}
 
-	var notes []note
+	var notes notes
 
 	err = json.NewDecoder(file).Decode(&notes)
 	if err != nil {
@@ -104,4 +107,21 @@ func Notes() ([]note, error) {
 	}
 
 	return notes, nil
+}
+
+func (notes notes) Find(id int) (note, error) {
+	var note note
+
+	for index, element := range notes {
+		if element.ID == id {
+			note = notes[index]
+			break
+		}
+	}
+
+	if note.ID != id {
+		return note, errors.New("Note not found")
+	}
+
+	return note, nil
 }
