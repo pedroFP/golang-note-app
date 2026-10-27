@@ -120,7 +120,7 @@ func (notes notes) Find(id int) (note, error) {
 	}
 
 	if note.ID != id {
-		return note, errors.New("Note not found")
+		return note, errors.New("note not found")
 	}
 
 	return note, nil
