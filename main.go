@@ -14,7 +14,7 @@ func main() {
 		return
 	}
 
-	newNote, err := note.New("HELLOW WORLD", false)
+	newNote, err := note.New("My New Setup", false)
 	if err != nil {
 		fmt.Println("note not instanced")
 		return
@@ -28,17 +28,17 @@ func main() {
 
 	notes, _ := note.Notes()
 
-	buffer, _ := json.Marshal(notes)
-	fmt.Println(string(buffer))
+	printJSON(notes)
 
-	// Upate newNote name
+	note, err := notes.Find(2)
+	if err != nil {
+		fmt.Println(err)
+	}
 
-	newNote.Title = "Resident Evil"
+	printJSON(note)
+}
 
-	newNote.Update()
-
-	notes, _ = note.Notes()
-
-	buffer, _ = json.Marshal(notes)
-	fmt.Println(string(buffer))
+func printJSON(note any) {
+	buffer, _ := json.Marshal(note)
+	fmt.Println("Note found!", string(buffer))
 }
